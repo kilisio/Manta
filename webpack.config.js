@@ -26,7 +26,7 @@ const productionConfig = merge([
     // Exclude NodeModules
     externals: [
       nodeExternals({
-        whitelist: [
+        allowlist: [
           'react-hot-loader',
           'react-hot-loader/patch',
           'redux-logger',
@@ -39,7 +39,7 @@ const productionConfig = merge([
 // DEVELOPMENT CONFIGS
 const developmentConfig = merge([
   // Analyze Bundle
-  parts.analyzeBundle(),
+  // parts.analyzeBundle(),
   // Dev Server
   parts.devServer({
     host: 'localhost',
@@ -63,7 +63,7 @@ const developmentConfig = merge([
       nodeExternals({
         // Except Webpack Hot Devserver & Emitter so
         // react-hot-loader can work properly
-        whitelist: ['webpack/hot/dev-server', 'webpack/hot/emitter'],
+        allowlist: ['webpack/hot/dev-server', 'webpack/hot/emitter'],
       }),
     ],
   },

@@ -21,12 +21,9 @@ ipcMain.on('save-pdf', (event, docId) => {
     };
   }
 
-  win.webContents.printToPDF(printOptions, (error, data) => {
-    if (error) throw error;
-    fs.writeFile(pdfPath, data, error => {
-      if (error) {
-        throw error;
-      }
+win.webContents.printToPDF(printOptions).then(data => {
+    fs.writeFile(pdfPath, data, (error) => {
+      if (error) throw error
       if (appConfig.get('general.previewPDF')) {
         // Open the PDF with default Reader
         shell.openExternal('file://' + pdfPath);
@@ -37,9 +34,12 @@ ipcMain.on('save-pdf', (event, docId) => {
         body: 'Click to reveal file.',
         location: pdfPath,
       });
-    });
+    })
+  }).catch(error => {
+    console.log(`Failed to write PDF to ${pdfPath}: `, error)
   });
 });
+
 
 ipcMain.on('reveal-file', (event, location) => {
   shell.showItemInFolder(location);

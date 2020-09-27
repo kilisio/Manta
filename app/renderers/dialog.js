@@ -3,12 +3,29 @@ const path = require('path');
 const url = require('url');
 
 // Electron Libs
-const { BrowserWindow } = require('electron').remote;
+const { BrowserWindow, screen } = require('electron').remote;
+
 
 // Custom Libs
 const sounds = require('../../libs/sounds.js');
 
-const centerOnPrimaryDisplay = require('../../helpers/center-on-primary-display');
+// const centerOnPrimaryDisplay = require('../../helpers/center-on-primary-display');
+
+
+function centerOnPrimaryDisplay(winWidth, winHeight){
+  // Get primary display (screen / monitor) bounds
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { x, y, width, height } = primaryDisplay.bounds;
+
+  // Calculate X and Y coordinates to make rectangular center on primary display
+  const winX = x + (width - winWidth) / 2;
+  const winY = y + (height - winHeight) / 2;
+
+  return {
+    x: winX,
+    y: winY,
+  };
+};
 
 function showModalWindow(dialogOptions, returnChannel = '', ...rest) {
   const width = 450;
@@ -25,6 +42,10 @@ function showModalWindow(dialogOptions, returnChannel = '', ...rest) {
     backgroundColor: '#282828',
     frame: false,
     show: false,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true
+    },
   });
   modalWin.loadURL(
     url.format({

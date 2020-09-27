@@ -10,11 +10,27 @@ const isDev = require('electron-is-dev');
 const omit = require('lodash').omit;
 
 // Electron Libs
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 // Place a BrowserWindow in center of primary display
-const centerOnPrimaryDisplay = require('./helpers/center-on-primary-display');
+// const centerOnPrimaryDisplay = require('./helpers/center-on-primary-display');
+
+function center_display(winWidth, winHeight){
+  // Get primary display (screen / monitor) bounds
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { x, y, width, height } = primaryDisplay.bounds;
+
+  // Calculate X and Y coordinates to make rectangular center on primary display
+  const winX = x + (width - winWidth) / 2;
+  const winY = y + (height - winHeight) / 2;
+
+  return {
+    x: winX,
+    y: winY,
+  };
+};
+
 
 // commmandline arguments
 const forceDevtools = process.argv.includes('--force-devtools');
@@ -35,7 +51,7 @@ function createTourWindow() {
   const height = 600;
 
   // Get X and Y coordinations on primary display
-  const winPOS = centerOnPrimaryDisplay(width, height);
+  const winPOS = center_display(width, height);
 
   // Creating a New Window
   tourWindow = new BrowserWindow({
@@ -49,6 +65,10 @@ function createTourWindow() {
     movable: false,
     title: 'Tour Window',
     backgroundColor: '#F9FAFA',
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true
+    },
   });
   // Register WindowID with appConfig
   appConfig.set('tourWindowID', parseInt(tourWindow.id));
@@ -85,6 +105,10 @@ function createMainWindow() {
     backgroundColor: '#2e2c29',
     show: false,
     title: 'Main Window',
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true
+    },
   });
   // Register WindowID
   appConfig.set('mainWindowID', parseInt(mainWindow.id));
@@ -122,11 +146,15 @@ function createPreviewWindow() {
     y: previewWindownStateKeeper.y,
     width: previewWindownStateKeeper.width,
     height: previewWindownStateKeeper.height,
-    minWidth: 1024,
-    minHeight: 800,
+    // minWidth: 1024,
+    // minHeight: 800,
     backgroundColor: '#2e2c29',
     show: false,
     title: 'Preview Window',
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true
+    },
   });
   // Register WindowID
   appConfig.set('previewWindowID', parseInt(previewWindow.id));
