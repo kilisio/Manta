@@ -26,4 +26,4 @@ linux:
   category: Office
   target:
     - deb
-    - AppImage
+  icon: static/imgs/256x256.png
